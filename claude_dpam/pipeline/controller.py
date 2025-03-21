@@ -21,6 +21,7 @@ from dpam.steps.foldseek import FoldSeekRunner
 from dpam.steps.filter_foldseek import FoldSeekFilter
 from dpam.steps.ecod import ECODMapper
 from dpam.steps.dali_candidates import DaliCandidatesCollector
+from dpam.steps.get_good_domains import DomainQualityFilter
 
 
 class DPAMPipelineController:
@@ -98,6 +99,13 @@ class DPAMPipelineController:
             'get_sse': ['get_good_domains'],
             'get_diso': ['get_sse'],
             'parse_domains': ['get_diso']
+            'get_good_domain': DomainQualityFilter({
+                'data_dir': data_dir,
+                'min_domain_size': pipeline_config.get('min_domain_size', 25),
+                'min_segment_size': pipeline_config.get('min_segment_size', 5),
+                'max_segment_gap': pipeline_config.get('max_segment_gap', 10)
+            })
+
         }
     
     def get_db_connection(self):
