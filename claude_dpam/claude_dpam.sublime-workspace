@@ -1,0 +1,448 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"sid",
+				"sidechain_outliers"
+			],
+			[
+				"structu",
+				"structureData"
+			],
+			[
+				"use",
+				"useCombinedClusterData"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "## dpam/__init__.py -- Package initialization",
+			"settings":
+			{
+				"buffer_size": 45,
+				"line_ending": "Windows",
+				"name": "## dpam/__init__.py -- Package initialization"
+			},
+			"undo_stack":
+			[
+				[
+					5,
+					1,
+					"insert",
+					{
+						"characters": "##"
+					},
+					"AgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					6,
+					1,
+					"insert",
+					{
+						"characters": " dpam/"
+					},
+					"BgAAAAIAAAAAAAAAAwAAAAAAAAAAAAAAAwAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAUAAAAAAAAAAAAAAAUAAAAAAAAABgAAAAAAAAAAAAAABgAAAAAAAAAHAAAAAAAAAAAAAAAHAAAAAAAAAAgAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAgAAAAAAAAACAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					7,
+					1,
+					"insert",
+					{
+						"characters": "__init__."
+					},
+					"CQAAAAgAAAAAAAAACQAAAAAAAAAAAAAACQAAAAAAAAAKAAAAAAAAAAAAAAAKAAAAAAAAAAsAAAAAAAAAAAAAAAsAAAAAAAAADAAAAAAAAAAAAAAADAAAAAAAAAANAAAAAAAAAAAAAAANAAAAAAAAAA4AAAAAAAAAAAAAAA4AAAAAAAAADwAAAAAAAAAAAAAADwAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAABEAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					8,
+					1,
+					"left_delete",
+					null,
+					"AQAAABAAAAAAAAAAEAAAAAAAAAABAAAALg",
+					"AQAAAAAAAAABAAAAEQAAAAAAAAARAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					9,
+					1,
+					"insert",
+					{
+						"characters": ".py"
+					},
+					"AwAAABAAAAAAAAAAEQAAAAAAAAAAAAAAEQAAAAAAAAASAAAAAAAAAAAAAAASAAAAAAAAABMAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					10,
+					1,
+					"insert",
+					{
+						"characters": " --"
+					},
+					"AwAAABMAAAAAAAAAFAAAAAAAAAAAAAAAFAAAAAAAAAAVAAAAAAAAAAAAAAAVAAAAAAAAABYAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAEwAAAAAAAAATAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					11,
+					1,
+					"insert",
+					{
+						"characters": " Package"
+					},
+					"CAAAABYAAAAAAAAAFwAAAAAAAAAAAAAAFwAAAAAAAAAYAAAAAAAAAAAAAAAYAAAAAAAAABkAAAAAAAAAAAAAABkAAAAAAAAAGgAAAAAAAAAAAAAAGgAAAAAAAAAbAAAAAAAAAAAAAAAbAAAAAAAAABwAAAAAAAAAAAAAABwAAAAAAAAAHQAAAAAAAAAAAAAAHQAAAAAAAAAeAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAFgAAAAAAAAAWAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					12,
+					1,
+					"insert",
+					{
+						"characters": " initiz"
+					},
+					"BwAAAB4AAAAAAAAAHwAAAAAAAAAAAAAAHwAAAAAAAAAgAAAAAAAAAAAAAAAgAAAAAAAAACEAAAAAAAAAAAAAACEAAAAAAAAAIgAAAAAAAAAAAAAAIgAAAAAAAAAjAAAAAAAAAAAAAAAjAAAAAAAAACQAAAAAAAAAAAAAACQAAAAAAAAAJQAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAHgAAAAAAAAAeAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					13,
+					1,
+					"left_delete",
+					null,
+					"AQAAACQAAAAAAAAAJAAAAAAAAAABAAAAeg",
+					"AQAAAAAAAAABAAAAJQAAAAAAAAAlAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					14,
+					1,
+					"insert",
+					{
+						"characters": "alization"
+					},
+					"CQAAACQAAAAAAAAAJQAAAAAAAAAAAAAAJQAAAAAAAAAmAAAAAAAAAAAAAAAmAAAAAAAAACcAAAAAAAAAAAAAACcAAAAAAAAAKAAAAAAAAAAAAAAAKAAAAAAAAAApAAAAAAAAAAAAAAApAAAAAAAAACoAAAAAAAAAAAAAACoAAAAAAAAAKwAAAAAAAAAAAAAAKwAAAAAAAAAsAAAAAAAAAAAAAAAsAAAAAAAAAC0AAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAJAAAAAAAAAAkAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"babe",
+				"Set Syntax: JavaScript (Babel)"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_annotation_workflow.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/generate_protein_plddt_commands.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/prioritize_annotation_targets.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_annotation_loader.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_file_indexer.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/delete_proteomes_protein_sequence.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/database_support",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_file_manager.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_files.schema",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_annot_modifications.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/comparative_completeness.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/comparative_analysis.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/go_data_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/ec_data_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_annot/uniprot_annot_data_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/proteomes_protein_plddt_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/extract_protein_plddt.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/generate_plddt_commands.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/test_cluster_job.sh",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/test_process_batch.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/process_plddt_batch.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/4way_plddt_histo.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/submit_plddt_batch.sh",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/distribute_plddt_extraction.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/extract_plddt_proteomes.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/plddt_integrity_check.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/cluster_analysis_temp.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_extend_init.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_scanner.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/protein_sequence_populator.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/parallel-dssp-population-script.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_data_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_sequence_extractor.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/config.json",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_extend_tables.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_extend_views.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_extend_build_index.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/proteomes_protein_sequence_populator.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/dedup_protein_sequence.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/test.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/proteome_db_tax_id.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/pdb_analysis_uniprot_mapper.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/proteomes_protein_integrity.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/structure_file_mapper.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/swissprot_structure_file_mapping_orphan_eliminator.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/extract_plddt_public.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/enhanced_public_plddt_extract.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/migrate_domain_plddt_detail_to_proteomes.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_domains_to_pfam_materialized_views_save_to_table.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_domains_to_pfam_materialized_views.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidates.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/populate_candidates.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_species_spread.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_domains_to_pfam.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_domains_to_pfam_analyze_explain.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/candidate_status.sql",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/debug_joins.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/claudes_last_dance.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/extract_plddt_swiss.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_api/uniprot_update_service.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/uniprot_api/uniprot_integration.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/tmalign/tm_align_job_generator.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/dssp_length.bash",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/process_structures_dssp.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/analyze_sge_results.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/testing/index.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/testing/MolStarTestingEnvironment.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/src/MolStarViewer.js",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/src/hooks/useMolStar.js",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/statistics/domain-quality.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/services/api.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/visualizations/DomainQualityVisualization.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/ui/switch.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/map_dssp_v2.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/create_missing_dssp_metadata.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/testing/MolStarStructureViewer.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/af2_pdb_sws_ecod.length.tsv",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/swissprot_afdb/public_dssp_filler.py",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/ui/textarea.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/cluster_sets/index.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/useStructureQuality.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/useActivityFeed.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/useReclassificationStats.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/useRecentClusters.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/clusters/[id].ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/clusters/[id].tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/cluster/useClusterData.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/cluster/useClusterMembers.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/cluster/useStructureData.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/cluster/useClusterMsa.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/cluster/useClusterValidation.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/index.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/ClusterHeader.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/ClusterMetricsCards.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/tabs/MembersTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/tabs/TaxonomyTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/tabs/StructureTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/tabs/AlignmentTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/ClusterDetailSkeleton.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/ClusterDetail/tabs/ValidationTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/shared/MetricProgress.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/shared/LoadingStates.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/cluster/shared/ErrorDisplay.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/DomainStructureTab.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/domains/[id]/structure.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/structures/file.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/index.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/MSAViewer.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/domains/[id].tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/ui/progress.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/utils/exportUtils.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/clusters/index.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/index.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/hooks/usePriorityClusters.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/clusters/priority.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/api/clusters/priority-mock.ts",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/layout/PageFooter.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/index_refactor.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/pages/index_refactor_2.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/layout/DashboardLayout.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/layout/PageHeader.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/SummaryCards.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/RecentClustersPanel.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/ActivityFeed.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/PendingReclassificationsPanel.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/QuickActionsPanel.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/visualizations/ClassificationStatusDashboard.tsx",
+		"/C/Users/rschae/OneDrive - University of Texas Southwestern/Documents/GitHub/ECOD_JS/components/dashboard/PriorityClustersPanel.tsx"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 45,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								45,
+								45
+							]
+						],
+						"settings":
+						{
+							"auto_name": "## dpam/__init__.py -- Package initialization",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 39.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 186.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

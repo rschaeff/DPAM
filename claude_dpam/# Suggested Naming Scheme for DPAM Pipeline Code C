@@ -1,0 +1,85 @@
+# Suggested Naming Scheme for DPAM Pipeline Code Components
+
+Here's a structured naming scheme for organizing the modernized DPAM pipeline codebase:
+
+## Core Module Files
+
+- `dpam/__init__.py` - Package initialization
+- `dpam/config.py` - Configuration management
+- `dpam/database.py` - Database connection and utility functions
+- `dpam/exceptions.py` - Custom exception classes
+
+## Pipeline Components
+
+- `dpam/pipeline/controller.py` - Main pipeline controller (`DPAMPipelineController`)
+- `dpam/pipeline/checkpoints.py` - Checkpoint management (`DPAMBatchCheckpoints`)
+- `dpam/pipeline/quality.py` - Quality control system (`DPAMQualityControl`)
+- `dpam/pipeline/errors.py` - Error handling system (`DPAMErrorHandler`)
+
+## Grid/Cluster Integration
+
+- `dpam/grid/manager.py` - OpenGrid job management (`DPAMOpenGridManager`)
+- `dpam/grid/worker.py` - Grid task executor for worker nodes
+- `dpam/grid/monitor.py` - Job monitoring utilities
+
+## Batch Processing
+
+- `dpam/batch/manager.py` - Batch creation and management (`DPAMBatchManager`)
+- `dpam/batch/preparation.py` - Batch preparation (`DPAMBatchPreparation`)
+- `dpam/batch/supplement.py` - Batch supplementation (`DPAMBatchSupplementation`)
+
+## Pipeline Steps Implementation
+
+- `dpam/steps/hhsearch.py` - HHsearch step implementation
+- `dpam/steps/foldseek.py` - FoldSeek step implementation
+- `dpam/steps/dali.py` - Iterative Dali step implementation
+- `dpam/steps/analysis.py` - Dali result analysis
+- `dpam/steps/support.py` - Domain support calculation
+- `dpam/steps/domains.py` - Domain detection
+- `dpam/steps/sse.py` - Secondary structure assignment
+- `dpam/steps/disorder.py` - Disorder detection
+- `dpam/steps/mapping.py` - ECOD mapping utilities
+
+## Database Schema
+
+- `dpam/schema/init.sql` - Initial schema creation
+- `dpam/schema/upgrade.sql` - Schema updates for version upgrades
+
+## API & CLI
+
+- `dpam/api/server.py` - REST API server implementation
+- `dpam/api/routes.py` - API routes and handlers
+- `dpam/cli/manager.py` - CLI management tool
+- `dpam/cli/worker.py` - Worker node execution script
+
+## Configuration & Setup
+
+- `config.json.template` - Template configuration file
+- `setup.py` - Package installation script
+- `requirements.txt` - Python dependencies
+
+## Utility Scripts
+
+- `bin/dpam-manager` - Command-line management tool
+- `bin/dpam-worker` - Worker node execution script 
+- `bin/dpam-api` - API server launcher
+- `bin/dpam-monitor` - Status monitoring utility
+
+## Test Suite
+
+- `tests/test_pipeline.py` - Pipeline tests
+- `tests/test_grid.py` - Grid integration tests
+- `tests/test_batch.py` - Batch management tests
+- `tests/test_steps.py` - Individual step tests
+- `tests/test_api.py` - API tests
+
+## Documentation Files
+
+- `docs/installation.md` - Installation guide
+- `docs/configuration.md` - Configuration reference
+- `docs/api_reference.md` - API documentation
+- `docs/pipeline_steps.md` - Pipeline step details
+- `docs/error_handling.md` - Error handling guide
+- `docs/architecture.md` - System architecture overview
+
+This naming scheme follows Python package conventions while organizing components into logical groups. The modular structure makes it easy to navigate, maintain, and extend the codebase as needed.
