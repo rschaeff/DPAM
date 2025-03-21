@@ -1,4 +1,22 @@
-## dpam/batch/supplement.py
+#!/usr/bin/env python3
+"""
+Batch supplementation utilities for DPAM pipeline.
+
+This module provides functionality for supplementing DPAM batch data with
+additional information, such as downloading PAE (Predicted Aligned Error)
+files for AlphaFold models and other supporting data needed for domain analysis.
+"""
+
+import os
+import logging
+import json
+import requests
+import shutil
+import psycopg2
+from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict, List, Any, Optional, Union
+from pathlib import Path
 
 class DPAMBatchSupplementation:
     def __init__(self, db_config):

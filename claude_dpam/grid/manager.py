@@ -1,4 +1,20 @@
-## dpam/grid/manager.py
+#!/usr/bin/env python3
+"""
+OpenGrid manager for DPAM pipeline.
+
+This module provides functionality for submitting and monitoring jobs
+on a grid computing environment for the distributed execution of the
+DPAM (Domain Parser for AlphaFold Models) pipeline.
+"""
+import os
+import subprocess
+import logging
+import json
+import time
+import psycopg2
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Any, Optional, Union
 
 class DPAMOpenGridManager:
     """Advanced OpenGrid management for DPAM pipeline"""
