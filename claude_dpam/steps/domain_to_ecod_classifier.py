@@ -10,7 +10,7 @@ import csv
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Set, Tuple, Union
 
-class ECODMapper:
+class DomainToEcodClassifier:
     """ECOD mapping utilities for protein domains"""
     
     def __init__(self, config: Dict[str, Any]):
