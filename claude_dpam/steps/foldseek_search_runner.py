@@ -26,6 +26,7 @@ class FoldSeekSearchRunner:
         self.logger = logging.getLogger("dpam.steps.foldseek")
         self.data_dir = config.get('data_dir', '/data')
         self.threads = config.get('foldseek_threads', 4)
+        self.foldseek_binary = config.get('foldseek_binary', 'foldseek')
     
     def run(self, structure_id, pdb_path, output_dir):
         """
@@ -63,7 +64,7 @@ class FoldSeekSearchRunner:
                 # Run FoldSeek easy-search
                 self.logger.info(f"Running FoldSeek for {structure_id}")
                 cmd = [
-                    "foldseek", "easy-search",
+                    self.foldseek_binary, "easy-search",
                     local_pdb_path,
                     f"{self.data_dir}/ECOD_foldseek_DB/ECOD_foldseek_DB",
                     f"{prefix}.foldseek",

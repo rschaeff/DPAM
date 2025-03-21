@@ -28,6 +28,7 @@ class IterativeDaliRunner:
         self.max_iterations = config.get('dali_max_iterations', 3)
         self.z_score_threshold = config.get('dali_z_score_threshold', 2.0)
         self.ecod_domain_db = os.path.join(self.data_dir, 'ECOD_domain_DB')
+        self.gemmi_binary = config.get('gemmi_binary', 'gemmi')
     
     def run(self, structure_id, structure_path, dali_candidates_path, output_dir):
         """
@@ -124,7 +125,7 @@ class IterativeDaliRunner:
         # For mmCIF, use a tool like gemmi to convert
         try:
             # Using gemmi for conversion
-            cmd = ["gemmi", "convert", "--to", "pdb", input_path, output_path]
+            cmd = [self.gemmi_binary, "convert", "--to", "pdb", input_path, output_path]
             subprocess.run(cmd, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error converting structure: {e.stderr}")

@@ -1,10 +1,13 @@
-## dpam/steps/ecod.py
+#!/usr/bin/env python3
+"""
+For mapping HHsearch results to ECOD domains
+"""
 
 import os
 import logging
 from datetime import datetime
 
-class ECODMapper:
+class SequenceToECODMapper:
     """Maps HHSearch results to ECOD domains"""
     
     def __init__(self, config):

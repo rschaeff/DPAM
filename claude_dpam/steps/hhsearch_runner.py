@@ -24,6 +24,9 @@ class HHSearchRunner:
         self.logger = logging.getLogger("dpam.steps.hhsearch")
         self.data_dir = config.get('data_dir', '/data')
         self.threads = config.get('hhsearch_threads', 4)
+
+        self.hhblits_binary = config.get('hhblits_binary', 'hhblits')
+        self.uniref_db = config.get('uniref_db', 'UniRef30_2022_02')
     
     def run(self, structure_id, fasta_path, output_dir):
         """
@@ -55,7 +58,7 @@ class HHSearchRunner:
                 # Run HHBlits to generate MSA
                 self.logger.info(f"Running HHBlits for {structure_id}")
                 hhblits_cmd = [
-                    "hhblits",
+                    self.hhblits_binary,
                     "-cpu", str(self.threads),
                     "-i", f"{prefix}.fa",
                     "-d", f"{self.data_dir}/UniRef30_2022_02/UniRef30_2022_02",

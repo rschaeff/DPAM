@@ -118,7 +118,7 @@ class SecondaryStructureAssigner:
         # For mmCIF, use gemmi to convert
         try:
             # Using gemmi for conversion
-            cmd = ["gemmi", "convert", "--to", "pdb", input_path, output_path]
+            cmd = [self.gemmi_binary, "convert", "--to", "pdb", input_path, output_path]
             subprocess.run(cmd, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error converting structure: {e.stderr}")
