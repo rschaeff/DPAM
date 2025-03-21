@@ -1,0 +1,64 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "dpam",
+    "user": "dpam_user",
+    "password": "change_this_password",
+    "schema": "dpam_queue"
+  },
+  "data_dir": "/data/dpam",
+  "batch_dir": "/data/dpam/batches",
+  "grid": {
+    "script_path": "/opt/dpam/bin/dpam-worker",
+    "log_dir": "/var/log/dpam",
+    "output_dir": "/data/dpam/output",
+    "env_path": "/opt/dpam/venv/bin/activate",
+    "max_runtime": "24:00:00",
+    "memory": "8G",
+    "threads": 4,
+    "hhsearch_threads": 4,
+    "foldseek_threads": 6,
+    "queue_name": "normal.q"
+  },
+  "pipeline": {
+    "min_domain_size": 30,
+    "max_domains": 20,
+    "dali_min_z_score": 8.0,
+    "disorder_threshold": 70.0,
+    "min_support_score": 0.5,
+    "ecod_weight": 2.0,
+    "dali_weight": 1.5,
+    "foldseek_weight": 1.0,
+    "pae_weight": 2.0
+  },
+  "binaries": {
+    "dssp": "mkdssp",
+    "hhsearch": "hhsearch",
+    "hhblits": "hhblits",
+    "foldseek": "foldseek",
+    "dali": "dali.pl"
+  },
+  "api": {
+    "host": "localhost",
+    "port": 8000,
+    "debug": false,
+    "workers": 4,
+    "timeout": 60
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "/var/log/dpam/dpam.log",
+    "max_bytes": 10485760,
+    "backup_count": 10
+  },
+  "ecod": {
+    "db_path": "/data/dpam/ECOD",
+    "api_base": "http://prodata.swmed.edu/ecod/rest/api"
+  },
+  "references": {
+    "uniref_db": "/data/dpam/UniRef30_2022_02/UniRef30_2022_02",
+    "pdb70_db": "/data/dpam/pdb70/pdb70",
+    "ecod_domain_db": "/data/dpam/ECOD_domain_DB"
+  }
+}
