@@ -31,15 +31,15 @@ ENV_PREFIX = "DPAM_"
 # Default configuration values
 DEFAULT_CONFIG = {
     "database": {
-        "host": "localhost",
-        "port": 5432,
+        "host": "dione",
+        "port": 4500,
         "dbname": "dpam",
         "user": "dpam",
         "password": "dpam_password",
         "schema": "dpam_queue"
     },
-    "data_dir": "/data/dpam",
-    "batch_dir": "/data/dpam/batches",
+    "data_dir": "/data/ecod/dpam",
+    "batch_dir": "/data/ecod/dpam/batches",
     "grid": {
         "script_path": "/opt/dpam/bin/dpam-worker",
         "log_dir": "/var/log/dpam",

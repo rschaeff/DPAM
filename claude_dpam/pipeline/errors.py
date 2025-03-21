@@ -1,5 +1,11 @@
 ## dpam/pipeline/errors.py
 
+import os
+import logging
+import json
+import psycopg2
+from datetime import datetime
+
 class DPAMErrorHandler:
     """Sophisticated error handling and recovery for DPAM pipeline"""
     
@@ -408,3 +414,202 @@ class DPAMErrorHandler:
                 """
                 UPDATE structures
                 SET parameters = jsonb_set(
+                    COALESCE(parameters, '{}'::jsonb),
+                    '{fallback_methods}',
+                    %s::jsonb
+                )
+                WHERE structure_id = %s
+                """,
+                (
+                    json.dumps({step_name: fallback_method}),
+                    structure_id
+                )
+            )
+            
+            # Get batch item id
+            cursor.execute(
+                """
+                SELECT batch_item_id FROM batch_items
+                WHERE batch_id = %s AND structure_id = %s
+                """,
+                (batch_id, structure_id)
+            )
+            batch_item_id = cursor.fetchone()[0]
+            
+            # Get step id
+            cursor.execute(
+                """
+                SELECT step_id FROM pipeline_steps
+                WHERE name = %s
+                """,
+                (step_name,)
+            )
+            step_id = cursor.fetchone()[0]
+            
+            # Log as using fallback
+            cursor.execute(
+                """
+                INSERT INTO step_logs
+                (batch_item_id, step_id, started_at, completed_at, status, output)
+                VALUES (%s, %s, NOW(), NOW(), 'USING_FALLBACK', %s)
+                """,
+                (
+                    batch_item_id, 
+                    step_id, 
+                    json.dumps({
+                        "fallback_method": fallback_method,
+                        "reason": error_info.get("reason", "Insufficient data")
+                    })
+                )
+            )
+            
+            conn.commit()
+            
+            # Execute fallback method
+            # This would call a method on the appropriate step class
+            # For demonstration, we'll assume it succeeds
+            
+            return {
+                "strategy": "FALLBACK_METHOD",
+                "fallback_method": fallback_method,
+                "reason": error_info.get("reason", "Insufficient data")
+            }
+            
+        except Exception as e:
+            conn.rollback()
+            # Fall back to skipping the step if fallback fails
+            return self._mark_step_as_skipped(batch_id, structure_id, step_name, {
+                "reason": f"Fallback method failed: {str(e)}"
+            })
+            
+        finally:
+            cursor.close()
+            conn.close()
+    
+    def log_recovery_attempt(self, batch_id, structure_id, step_name, strategy_result):
+        """Log recovery attempt in database"""
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Insert recovery log
+            cursor.execute(
+                """
+                INSERT INTO recovery_logs
+                (batch_id, structure_id, step_name, strategy, details, created_at)
+                VALUES (%s, %s, %s, %s, %s, NOW())
+                """,
+                (
+                    batch_id,
+                    structure_id,
+                    step_name,
+                    strategy_result.get("strategy"),
+                    json.dumps(strategy_result)
+                )
+            )
+            
+            conn.commit()
+            
+        finally:
+            cursor.close()
+            conn.close()
+    
+    def get_recovery_statistics(self, batch_id):
+        """Get statistics on recovery attempts for a batch"""
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Get recovery statistics
+            cursor.execute(
+                """
+                SELECT 
+                    step_name, 
+                    strategy, 
+                    COUNT(*) as count,
+                    SUM(CASE WHEN e.resolved_at IS NOT NULL THEN 1 ELSE 0 END) as resolved_count
+                FROM recovery_logs r
+                LEFT JOIN error_logs e ON 
+                    r.batch_id = e.batch_id AND 
+                    r.structure_id = e.structure_id AND 
+                    r.step_name = e.step_name
+                WHERE r.batch_id = %s
+                GROUP BY step_name, strategy
+                ORDER BY step_name, count DESC
+                """,
+                (batch_id,)
+            )
+            
+            results = []
+            for row in cursor.fetchall():
+                results.append({
+                    'step_name': row[0],
+                    'strategy': row[1],
+                    'count': row[2],
+                    'resolved_count': row[3],
+                    'success_rate': row[3] / row[2] if row[2] > 0 else 0
+                })
+                
+            return results
+            
+        finally:
+            cursor.close()
+            conn.close()
+    
+    def analyze_error_patterns(self, batch_id=None):
+        """Analyze error patterns to identify systematic issues"""
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Build query based on whether batch_id is provided
+            if batch_id:
+                query = """
+                SELECT 
+                    step_name, 
+                    error_type, 
+                    COUNT(*) as count,
+                    array_agg(DISTINCT structure_id) as structure_ids
+                FROM error_logs
+                WHERE batch_id = %s
+                GROUP BY step_name, error_type
+                ORDER BY count DESC
+                """
+                params = (batch_id,)
+            else:
+                query = """
+                SELECT 
+                    step_name, 
+                    error_type, 
+                    COUNT(*) as count,
+                    COUNT(DISTINCT batch_id) as batch_count
+                FROM error_logs
+                GROUP BY step_name, error_type
+                ORDER BY count DESC
+                """
+                params = None
+            
+            cursor.execute(query, params)
+            
+            results = []
+            for row in cursor.fetchall():
+                if batch_id:
+                    results.append({
+                        'step_name': row[0],
+                        'error_type': row[1],
+                        'count': row[2],
+                        'structure_ids': row[3]
+                    })
+                else:
+                    results.append({
+                        'step_name': row[0],
+                        'error_type': row[1],
+                        'count': row[2],
+                        'batch_count': row[3]
+                    })
+                
+            return results
+            
+        finally:
+            cursor.close()
+            conn.close()

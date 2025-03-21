@@ -5,6 +5,8 @@ import gzip
 import gemmi
 import shutil
 import hashlib
+import psycopg2
+
 from concurrent.futures import ThreadPoolExecutor
 
 class DPAMBatchPreparation:

@@ -1,135 +1,143 @@
-# dpam/steps/hhsearch.py
-"""
-Implementation of HHSearch step for DPAM pipeline.
-"""
+## dpam/steps/hhsearch.py
 
 import os
 import subprocess
-import json
-from typing import Dict, List, Any, Optional
+import logging
+import tempfile
+import shutil
+from datetime import datetime
 
-from dpam.steps.base import StepBase, StepResult
-from dpam.gemmi_utils import get_structure_handler
-
-class HHSearchStep(StepBase):
-    """Step for running HHblits and HHsearch."""
+class HHSearchRunner:
+    """Encapsulates execution of HHSearch pipeline for sequence-based homology detection"""
     
-    def run(self) -> StepResult:
+    def __init__(self, config):
         """
-        Run the step.
+        Initialize HHSearch runner with configuration
         
+        Args:
+            config (dict): Configuration containing paths and parameters
+        """
+        self.config = config
+        self.logger = logging.getLogger("dpam.steps.hhsearch")
+        self.data_dir = config.get('data_dir', '/data')
+        self.threads = config.get('hhsearch_threads', 4)
+    
+    def run(self, structure_id, fasta_path, output_dir):
+        """
+        Run HHSearch pipeline for a given structure
+        
+        Args:
+            structure_id (str): Structure identifier
+            fasta_path (str): Path to input FASTA file
+            output_dir (str): Directory for output files
+            
         Returns:
-            Step result
+            dict: Results including paths to output files and status
         """
-        # Get parameters
-        params = self._load_step_params()
+        start_time = datetime.now()
+        self.logger.info(f"Starting HHSearch for structure {structure_id}")
         
-        # Get structure handler
-        handler = get_structure_handler()
-        
-        # Get structure path
-        structure_path = self._get_structure_path()
-        
-        # Define output paths
-        fasta_path = self._get_output_file(".fa")
-        a3m_path = self._get_output_file(".a3m")
-        hmm_path = self._get_output_file(".hmm")
-        hhsearch_path = self._get_output_file(".hhsearch")
-        
-        # Extract sequence if not already done
-        if not os.path.exists(fasta_path):
-            self.logger.info("Extracting sequence from structure")
+        # Create temporary working directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            prefix = f"struct_{structure_id}"
+            
+            # Copy fasta to working directory
+            shutil.copy(fasta_path, os.path.join(temp_dir, f"{prefix}.fa"))
+            
+            # Change to working directory
+            original_dir = os.getcwd()
+            os.chdir(temp_dir)
             
             try:
-                # Read structure
-                structure = handler.read_structure(structure_path)
+                # Run HHBlits to generate MSA
+                self.logger.info(f"Running HHBlits for {structure_id}")
+                hhblits_cmd = [
+                    "hhblits",
+                    "-cpu", str(self.threads),
+                    "-i", f"{prefix}.fa",
+                    "-d", f"{self.data_dir}/UniRef30_2022_02/UniRef30_2022_02",
+                    "-oa3m", f"{prefix}.a3m"
+                ]
+                self._run_command(hhblits_cmd)
                 
-                # Extract sequence
-                sequences = handler.extract_sequence(structure)
+                # Add secondary structure
+                self.logger.info(f"Adding secondary structure for {structure_id}")
+                addss_cmd = [
+                    "addss.pl",
+                    f"{prefix}.a3m",
+                    f"{prefix}.a3m.ss",
+                    "-a3m"
+                ]
+                self._run_command(addss_cmd)
                 
-                # Write FASTA
-                with open(fasta_path, 'w') as f:
-                    f.write(f">{self.structure_info['pdb_id']}\n")
-                    f.write(f"{list(sequences.values())[0]}\n")
+                # Move the SS augmented MSA back to original name
+                os.rename(f"{prefix}.a3m.ss", f"{prefix}.a3m")
                 
-                self.logger.info(f"Wrote sequence to {fasta_path}")
+                # Run HHMake to generate HMM
+                self.logger.info(f"Running HHMake for {structure_id}")
+                hhmake_cmd = [
+                    "hhmake",
+                    "-i", f"{prefix}.a3m",
+                    "-o", f"{prefix}.hmm"
+                ]
+                self._run_command(hhmake_cmd)
+                
+                # Run HHSearch against PDB70
+                self.logger.info(f"Running HHSearch for {structure_id}")
+                hhsearch_cmd = [
+                    "hhsearch",
+                    "-cpu", str(self.threads),
+                    "-Z", "100000",
+                    "-B", "100000",
+                    "-i", f"{prefix}.hmm",
+                    "-d", f"{self.data_dir}/pdb70/pdb70",
+                    "-o", f"{prefix}.hhsearch"
+                ]
+                self._run_command(hhsearch_cmd)
+                
+                # Copy results to output directory
+                os.makedirs(output_dir, exist_ok=True)
+                for ext in [".a3m", ".hmm", ".hhsearch"]:
+                    src = os.path.join(temp_dir, f"{prefix}{ext}")
+                    dst = os.path.join(output_dir, f"{prefix}{ext}")
+                    shutil.copy(src, dst)
+                
+                # Return success and output paths
+                end_time = datetime.now()
+                duration = (end_time - start_time).total_seconds()
+                
+                return {
+                    "status": "COMPLETED",
+                    "structure_id": structure_id,
+                    "output_files": {
+                        "a3m": os.path.join(output_dir, f"{prefix}.a3m"),
+                        "hmm": os.path.join(output_dir, f"{prefix}.hmm"),
+                        "hhsearch": os.path.join(output_dir, f"{prefix}.hhsearch")
+                    },
+                    "metrics": {
+                        "duration_seconds": duration,
+                        "threads_used": self.threads
+                    }
+                }
                 
             except Exception as e:
-                self.logger.error(f"Failed to extract sequence: {e}")
+                self.logger.error(f"Error running HHSearch for {structure_id}: {str(e)}")
                 return {
-                    'status': 'FAILED',
-                    'error_message': f"Failed to extract sequence: {e}"
+                    "status": "FAILED",
+                    "structure_id": structure_id,
+                    "error_message": str(e)
                 }
+            
+            finally:
+                # Return to original directory
+                os.chdir(original_dir)
+    
+    def _run_command(self, cmd):
+        """Run a command and handle errors"""
+        self.logger.debug(f"Running command: {' '.join(cmd)}")
+        result = subprocess.run(cmd, capture_output=True, text=True)
         
-        # Run HHblits
-        self.logger.info("Running HHblits")
-        uniref_db = os.path.join(self.data_dir, "UniRef30_2022_02", "UniRef30_2022_02")
-        hhblits_cmd = f"hhblits -cpu {self.threads} -i {fasta_path} -d {uniref_db} -oa3m {a3m_path}"
+        if result.returncode != 0:
+            raise RuntimeError(f"Command failed with code {result.returncode}: {result.stderr}")
         
-        exit_code, stdout, stderr = self._run_command(hhblits_cmd)
-        if exit_code != 0:
-            self.logger.error(f"HHblits failed: {stderr}")
-            return {
-                'status': 'FAILED',
-                'error_message': f"HHblits failed: {stderr}"
-            }
-        
-        # Add secondary structure
-        self.logger.info("Adding secondary structure")
-        addss_cmd = f"addss.pl {a3m_path} {a3m_path}.ss -a3m"
-        exit_code, stdout, stderr = self._run_command(addss_cmd)
-        
-        # Move result
-        os.rename(f"{a3m_path}.ss", a3m_path)
-        
-        # Create HMM
-        self.logger.info("Creating HMM")
-        hhmake_cmd = f"hhmake -i {a3m_path} -o {hmm_path}"
-        exit_code, stdout, stderr = self._run_command(hhmake_cmd)
-        if exit_code != 0:
-            self.logger.error(f"HHmake failed: {stderr}")
-            return {
-                'status': 'FAILED',
-                'error_message': f"HHmake failed: {stderr}"
-            }
-        
-        # Run HHsearch
-        self.logger.info("Running HHsearch")
-        pdb70_db = os.path.join(self.data_dir, "pdb70", "pdb70")
-        
-        # Get parameters
-        z_score = params.get('z_score', 100000)
-        b_score = params.get('b_score', 100000)
-        
-        hhsearch_cmd = f"hhsearch -cpu {self.threads} -Z {z_score} -B {b_score} -i {hmm_path} -d {pdb70_db} -o {hhsearch_path}"
-        exit_code, stdout, stderr = self._run_command(hhsearch_cmd)
-        if exit_code != 0:
-            self.logger.error(f"HHsearch failed: {stderr}")
-            return {
-                'status': 'FAILED',
-                'error_message': f"HHsearch failed: {stderr}"
-            }
-        
-        # Check if HHsearch found any hits
-        hit_count = 0
-        with open(hhsearch_path, 'r') as f:
-            for line in f:
-                if line.startswith("No "):
-                    hit_count += 1
-        
-        self.logger.info(f"HHsearch found {hit_count} hits")
-        
-        # Return success result
-        return {
-            'status': 'COMPLETED',
-            'output_files': {
-                'fasta': fasta_path,
-                'a3m': a3m_path,
-                'hmm': hmm_path,
-                'hhsearch': hhsearch_path
-            },
-            'metrics': {
-                'cpu_time': self.threads * 3600,  # Estimate in seconds
-                'hit_count': hit_count
-            }
-        }
+        return result.stdout

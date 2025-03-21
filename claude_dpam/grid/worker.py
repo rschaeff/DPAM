@@ -1,224 +1,339 @@
 #!/usr/bin/env python3
 """
-Base class for DPAM pipeline steps.
-
-This module defines the abstract base class for all pipeline steps,
-providing common functionality and interfaces.
+Worker script for executing DPAM pipeline steps on OpenGrid nodes.
 """
 
 import os
+import sys
 import json
 import time
+import gzip
 import logging
-import tempfile
-import shutil
-import subprocess
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List, Tuple, Union
+import argparse
+import traceback
+from typing import Dict, List, Any, Optional, Tuple
+from datetime import datetime
+from pathlib import Path
 
-# Define step result type
-StepResult = Dict[str, Any]
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-class StepBase(ABC):
-    """Abstract base class for DPAM pipeline steps"""
+from dpam.steps.base import StepBase, StepResult
+import dpam.steps  # Import all step implementations
+from dpam.gemmi_utils import get_structure_handler
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('dpam_worker.log')
+    ]
+)
+logger = logging.getLogger('dpam.grid.worker')
+
+class DPAMWorker:
+    """Worker for executing DPAM pipeline steps."""
     
-    def __init__(self, structure_info: Dict[str, Any], data_dir: str, 
-                batch_id: int, work_dir: str, threads: int = 1):
+    def __init__(self, 
+                task_id: int, 
+                batch_id: int, 
+                step_name: str, 
+                manifest_path: str,
+                data_dir: str,
+                output_dir: str,
+                threads: int = 1,
+                verbose: bool = False):
         """
-        Initialize step with common parameters.
+        Initialize the worker.
         
         Args:
-            structure_info: Dictionary with structure information
-            data_dir: Path to data directory
+            task_id: Task ID (SGE_TASK_ID)
             batch_id: Batch ID
-            work_dir: Working directory for temporary files
+            step_name: Pipeline step to execute
+            manifest_path: Path to batch manifest file
+            data_dir: Path to reference data directory
+            output_dir: Path to output directory
             threads: Number of threads to use
+            verbose: Whether to enable verbose logging
         """
-        self.structure_info = structure_info
-        self.structure_id = str(structure_info.get('structure_id', ''))
-        self.pdb_id = structure_info.get('pdb_id', '')
-        self.data_dir = data_dir
+        self.task_id = task_id
         self.batch_id = batch_id
-        self.work_dir = work_dir
+        self.step_name = step_name
+        self.manifest_path = manifest_path
+        self.data_dir = data_dir
+        self.output_dir = output_dir
         self.threads = threads
+        self.verbose = verbose
         
-        # Set up logging
-        self.logger = logging.getLogger(f"dpam.steps.{self.__class__.__name__}")
+        if self.verbose:
+            logging.getLogger().setLevel(logging.DEBUG)
         
-        # Ensure working directory exists
-        os.makedirs(self.work_dir, exist_ok=True)
+        # Initialize handler
+        self.structure_handler = get_structure_handler()
+        
+        # Load manifest
+        self.manifest = self._load_manifest()
+        
+        # Map task_id to structure_id
+        self.structure_info = self._get_structure_info()
+        
+        # Set up working directory
+        self.work_dir = self._setup_working_directory()
+        
+        # Initialize step instance
+        self.step_instance = self._initialize_step()
     
-    @abstractmethod
-    def run(self) -> StepResult:
+    def _load_manifest(self) -> Dict[str, Any]:
         """
-        Run the step.
-        
-        This method must be implemented by subclasses.
+        Load the batch manifest file.
         
         Returns:
-            Dictionary with results including paths to output files and status
+            Manifest data
         """
-        pass
-    
-    def cleanup(self) -> None:
-        """
-        Clean up temporary files.
-        
-        This method can be overridden by subclasses if needed.
-        """
-        pass
-    
-    def _get_structure_path(self) -> str:
-        """
-        Get path to input structure file.
-        
-        Returns:
-            Path to structure file
-        """
-        return self.structure_info.get('structure_path', '')
-    
-    def _get_output_file(self, extension: str) -> str:
-        """
-        Generate path for output file in working directory.
-        
-        Args:
-            extension: File extension (including dot)
+        try:
+            with open(self.manifest_path, 'r') as f:
+                manifest = json.load(f)
             
-        Returns:
-            Path to output file
-        """
-        return os.path.join(self.work_dir, f"struct_{self.structure_id}{extension}")
-    
-    def _load_step_params(self) -> Dict[str, Any]:
-        """
-        Load step-specific parameters from structure record.
-        
-        Returns:
-            Dictionary with parameters or empty dict if none defined
-        """
-        params = self.structure_info.get('parameters', {})
-        step_params = params.get('step_params', {})
-        step_name = self.__class__.__name__.lower()
-        
-        return step_params.get(step_name, {})
-    
-    def _run_command(self, command: str, timeout: Optional[int] = None, 
-                    check: bool = False) -> Tuple[int, str, str]:
-        """
-        Run shell command and return result.
-        
-        Args:
-            command: Command to run
-            timeout: Timeout in seconds (None for no timeout)
-            check: Whether to raise exception on non-zero exit code
+            logger.debug(f"Loaded manifest with {len(manifest['structures'])} structures")
+            return manifest
             
-        Returns:
-            Tuple of (exit_code, stdout, stderr)
+        except Exception as e:
+            logger.error(f"Failed to load manifest: {e}")
+            raise
+    
+    def _get_structure_info(self) -> Dict[str, Any]:
         """
-        self.logger.debug(f"Running command: {command}")
+        Get structure information for the current task.
+        
+        Returns:
+            Structure information
+        """
+        structures = self.manifest['structures']
+        structure_ids = list(structures.keys())
+        
+        if self.task_id <= 0 or self.task_id > len(structure_ids):
+            raise ValueError(f"Task ID {self.task_id} out of range (1-{len(structure_ids)})")
+        
+        structure_id = structure_ids[self.task_id - 1]  # Convert to 0-based
+        structure_info = structures[structure_id]
+        structure_info['structure_id'] = structure_id
+        
+        logger.info(f"Processing structure {structure_info['pdb_id']} (ID: {structure_id})")
+        return structure_info
+    
+    def _setup_working_directory(self) -> str:
+        """
+        Set up the working directory for the task.
+        
+        Returns:
+            Path to working directory
+        """
+        # Create unique working directory
+        work_dir = os.path.join(
+            self.output_dir,
+            f"batch_{self.batch_id}",
+            "work",
+            f"{self.structure_info['pdb_id']}_{self.step_name}"
+        )
+        
+        os.makedirs(work_dir, exist_ok=True)
+        logger.debug(f"Created working directory: {work_dir}")
+        
+        return work_dir
+    
+    def _initialize_step(self) -> StepBase:
+        """
+        Initialize the step instance.
+        
+        Returns:
+            Step instance
+        """
+        # Find step class by name (dynamically)
+        step_class = None
+        step_module_name = self.step_name.lower()
+        
+        # Import the specific module
+        try:
+            # Try to import with specific capitalization patterns
+            module_candidates = [
+                f"dpam.steps.{step_module_name}",
+                f"dpam.steps.{step_module_name.replace('_', '')}",
+                f"dpam.steps.{step_module_name.replace('_', '.')}"
+            ]
+            
+            for module_name in module_candidates:
+                try:
+                    module = __import__(module_name, fromlist=[''])
+                    # Look for class with pattern StepName, StepNameStep, etc.
+                    for attr_name in dir(module):
+                        if not attr_name.startswith('_') and attr_name.lower().replace('step', '') == step_module_name.replace('_', '').lower():
+                            step_class = getattr(module, attr_name)
+                            break
+                    
+                    if step_class:
+                        break
+                except ImportError:
+                    continue
+                
+            if not step_class:
+                raise ImportError(f"Could not find step class for {self.step_name}")
+                
+        except ImportError as e:
+            logger.error(f"Failed to import step module: {e}")
+            raise
+        
+        # Initialize the step
+        return step_class(
+            structure_info=self.structure_info,
+            data_dir=self.data_dir,
+            batch_id=self.batch_id,
+            work_dir=self.work_dir,
+            threads=self.threads
+        )
+    
+    def execute(self) -> StepResult:
+        """
+        Execute the step.
+        
+        Returns:
+            Result of step execution
+        """
+        logger.info(f"Starting execution of step {self.step_name} for structure {self.structure_info['pdb_id']}")
+        
+        start_time = time.time()
         
         try:
-            process = subprocess.run(
-                command,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                timeout=timeout,
-                check=check
-            )
+            # Execute the step
+            result = self.step_instance.run()
             
-            return process.returncode, process.stdout, process.stderr
+            # Record execution time
+            execution_time = time.time() - start_time
+            if 'metrics' not in result:
+                result['metrics'] = {}
+            result['metrics']['execution_time'] = execution_time
             
-        except subprocess.SubprocessError as e:
-            self.logger.error(f"Command failed: {e}")
-            return 1, "", str(e)
-    
-    def _copy_to_output(self, source_path: str, destination_path: str) -> None:
-        """
-        Copy file to output location.
-        
-        Args:
-            source_path: Source file path
-            destination_path: Destination file path
-        """
-        # Create destination directory if needed
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
-        
-        # Copy file
-        shutil.copy2(source_path, destination_path)
-        self.logger.debug(f"Copied {source_path} to {destination_path}")
-    
-    def _load_json(self, path: str) -> Dict[str, Any]:
-        """
-        Load JSON file.
-        
-        Args:
-            path: Path to JSON file
+            # Add structure information
+            result['structure_id'] = self.structure_info['structure_id']
+            result['pdb_id'] = self.structure_info['pdb_id']
             
-        Returns:
-            Loaded JSON data as dictionary
-        """
-        with open(path, 'r') as f:
-            return json.load(f)
+            # Add step information
+            result['step_name'] = self.step_name
+            result['started_at'] = datetime.fromtimestamp(start_time).isoformat()
+            result['completed_at'] = datetime.fromtimestamp(time.time()).isoformat()
+            
+            logger.info(f"Step {self.step_name} completed in {execution_time:.2f} seconds")
+            
+            return result
+            
+        except Exception as e:
+            # Log the error
+            logger.error(f"Error executing step {self.step_name}: {e}")
+            logger.error(traceback.format_exc())
+            
+            # Return error result
+            return {
+                'status': 'FAILED',
+                'structure_id': self.structure_info['structure_id'],
+                'pdb_id': self.structure_info['pdb_id'],
+                'step_name': self.step_name,
+                'error_message': str(e),
+                'traceback': traceback.format_exc(),
+                'started_at': datetime.fromtimestamp(start_time).isoformat(),
+                'completed_at': datetime.fromtimestamp(time.time()).isoformat(),
+                'execution_time': time.time() - start_time
+            }
     
-    def _save_json(self, data: Dict[str, Any], path: str) -> None:
+    def save_result(self, result: StepResult) -> str:
         """
-        Save data as JSON file.
+        Save the step result to a file.
         
         Args:
-            data: Data to save
-            path: Output file path
-        """
-        with open(path, 'w') as f:
-            json.dump(data, f, indent=2)
-    
-    def _measure_time(self, func: callable, *args, **kwargs) -> Tuple[Any, float]:
-        """
-        Measure execution time of a function.
-        
-        Args:
-            func: Function to call
-            args: Positional arguments to function
-            kwargs: Keyword arguments to function
+            result: Step execution result
             
         Returns:
-            Tuple of (function result, execution time in seconds)
+            Path to result file
         """
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        execution_time = time.time() - start_time
+        # Create results directory
+        results_dir = os.path.join(
+            self.output_dir,
+            f"batch_{self.batch_id}",
+            "grid_results",
+            self.step_name
+        )
         
-        return result, execution_time
+        os.makedirs(results_dir, exist_ok=True)
+        
+        # Save result
+        result_path = os.path.join(
+            results_dir,
+            f"{self.structure_info['pdb_id']}_{self.step_name}_result.json"
+        )
+        
+        with open(result_path, 'w') as f:
+            json.dump(result, f, indent=2)
+        
+        logger.info(f"Saved result to {result_path}")
+        return result_path
     
-    def _create_temp_directory(self) -> str:
-        """
-        Create temporary directory for step processing.
-        
-        Returns:
-            Path to temporary directory
-        """
-        temp_dir = tempfile.mkdtemp(prefix=f"{self.__class__.__name__}_{self.structure_id}_", 
-                                   dir=self.work_dir)
-        return temp_dir
-    
-    def _handle_error(self, error: Exception, message: str) -> StepResult:
-        """
-        Handle step execution error.
-        
-        Args:
-            error: Exception that occurred
-            message: Error message prefix
+    def cleanup(self) -> None:
+        """Clean up temporary files."""
+        if hasattr(self.step_instance, 'cleanup'):
+            self.step_instance.cleanup()
             
-        Returns:
-            Step result with error status
-        """
-        error_message = f"{message}: {str(error)}"
-        self.logger.error(error_message)
+        # Clean up working directory if configured
+        if os.environ.get('DPAM_CLEAN_WORK_DIR', '').lower() in ('true', '1', 'yes'):
+            import shutil
+            logger.info(f"Cleaning up working directory: {self.work_dir}")
+            shutil.rmtree(self.work_dir, ignore_errors=True)
+
+def main():
+    """Main entry point for the worker script."""
+    parser = argparse.ArgumentParser(description='DPAM Pipeline Step Executor')
+    parser.add_argument('--batch-id', type=int, required=True, help='Batch ID')
+    parser.add_argument('--step', type=str, required=True, help='Pipeline step to execute')
+    parser.add_argument('--task-id', type=int, required=True, help='Task ID (SGE_TASK_ID)')
+    parser.add_argument('--manifest', type=str, required=True, help='Path to batch manifest file')
+    parser.add_argument('--data-dir', type=str, required=True, help='Path to data directory')
+    parser.add_argument('--output-dir', type=str, required=True, help='Path to output directory')
+    parser.add_argument('--threads', type=int, default=1, help='Number of threads to use')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose logging')
+    
+    args = parser.parse_args()
+    
+    try:
+        # Initialize worker
+        worker = DPAMWorker(
+            task_id=args.task_id,
+            batch_id=args.batch_id,
+            step_name=args.step,
+            manifest_path=args.manifest,
+            data_dir=args.data_dir,
+            output_dir=args.output_dir,
+            threads=args.threads,
+            verbose=args.verbose
+        )
         
-        return {
-            'status': 'FAILED',
-            'error_message': error_message,
-            'structure_id': self.structure_id,
-            'batch_id': self.batch_id
-        }
+        # Execute step
+        result = worker.execute()
+        
+        # Save result
+        worker.save_result(result)
+        
+        # Clean up
+        worker.cleanup()
+        
+        # Exit with appropriate code
+        if result.get('status') == 'FAILED':
+            sys.exit(1)
+        else:
+            sys.exit(0)
+            
+    except Exception as e:
+        logger.error(f"Worker execution failed: {e}")
+        logger.error(traceback.format_exc())
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
