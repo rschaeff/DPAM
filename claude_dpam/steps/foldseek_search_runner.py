@@ -1,4 +1,8 @@
-## dpam/steps/foldseek.py
+#!/usr/bin/env python3
+"""
+Runs Foldseek against query structures
+
+"""
 
 import os
 import subprocess
@@ -8,7 +12,7 @@ import shutil
 import time
 from datetime import datetime
 
-class FoldSeekRunner:
+class FoldSeekSearchRunner:
     """Encapsulates execution of FoldSeek for structure-based homology detection"""
     
     def __init__(self, config):

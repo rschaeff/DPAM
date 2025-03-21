@@ -1,4 +1,9 @@
-## dpam/steps/dali_candidates.py
+#!/usr/bin/env python3
+"""
+Upstream module for defining DALI search candidates based on fast search
+
+This module defines the candidate collector class, it is upstream of iterative_dali
+"""
 
 import os
 import logging

@@ -19,7 +19,7 @@ from typing import Dict, Any, Optional, List, Tuple, Union
 # Define step result type
 StepResult = Dict[str, Any]
 
-class StepBase(ABC):
+class PipelineStepBase(ABC):
     """Abstract base class for DPAM pipeline steps"""
     
     def __init__(self, structure_info: Dict[str, Any], data_dir: str, 

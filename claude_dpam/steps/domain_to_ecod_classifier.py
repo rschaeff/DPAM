@@ -1,4 +1,8 @@
-## dpam/steps/mapping.py
+#!/usr/bin/env python3
+"""
+For domain assignment to ECOD
+
+"""
 
 import os
 import json
@@ -10,7 +14,7 @@ import csv
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Set, Tuple, Union
 
-class DomainToEcodClassifier:
+class DomainToECODClassifier:
     """ECOD mapping utilities for protein domains"""
     
     def __init__(self, config: Dict[str, Any]):

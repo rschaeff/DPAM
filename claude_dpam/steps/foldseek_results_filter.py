@@ -1,10 +1,13 @@
-## dpam/steps/filter_foldseek.py
+#!/usr/bin/env python3
+"""
+The module does post-processing on FoldSeek results
 
+"""
 import os
 import logging
 from datetime import datetime
 
-class FoldSeekFilter:
+class FoldSeekResultsFilter:
     """Filters FoldSeek results to retain significant matches"""
     
     def __init__(self, config):

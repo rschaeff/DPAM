@@ -1,4 +1,10 @@
-## dpam/steps/domains.py
+#!/usr/bin/env python3
+"""
+DPAM domain detector
+
+This module reads alignment data and provides the domain definitions
+
+"""
 
 import os
 import json

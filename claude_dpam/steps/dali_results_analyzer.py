@@ -1,5 +1,9 @@
-## dpam/steps/analyze_dali.py
+#!/usr/bin/env python3
+"""
+Step module for processing dali search results
 
+This module defines the parameters and contains parsing routines for reading DALI result files
+"""
 import os
 import json
 import logging

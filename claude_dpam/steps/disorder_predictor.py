@@ -1,4 +1,10 @@
-## dpam/steps/disorder.py
+#!/usr/bin/env python3
+"""
+Disorder predictor
+
+Predicts disordered regions using pLDDT scores from AlphaFold models
+
+"""
 
 import os
 import json

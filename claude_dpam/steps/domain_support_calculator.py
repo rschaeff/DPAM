@@ -1,5 +1,8 @@
-## dpam/steps/support.py
+#!/usr/bin/env python3
+"""
+Calculates support for domains using multiple evidence sources
 
+"""
 import os
 import json
 import logging

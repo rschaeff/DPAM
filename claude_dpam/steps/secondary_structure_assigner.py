@@ -1,4 +1,8 @@
-## dpam/steps/sse.py
+#!/usr/bin/env python3
+"""
+Runs DSSP, assigns secondary structure
+
+"""
 
 import os
 import subprocess

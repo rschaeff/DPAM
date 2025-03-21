@@ -1,4 +1,7 @@
-## dpam/steps/hhsearch.py
+#!/usr/bin/env python3
+"""
+Wraps HHSearch for domain detection
+"""
 
 import os
 import subprocess
