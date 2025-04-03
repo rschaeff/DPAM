@@ -208,3 +208,173 @@ class TestEnvironmentOverrides:
         assert isinstance(config.get("debug"), bool)
 
 # Add more tests for other functionality in config.py as needed
+# Add these tests to your existing tests/unit/test_config.py file
+
+class TestAdditionalConfigMethods:
+    """Tests for additional ConfigManager methods"""
+    
+    def test_get_grid_config(self):
+        """Test retrieving grid configuration"""
+        test_grid_config = {
+            "script_path": "/test/path",
+            "log_dir": "/test/logs",
+            "max_runtime": "12:00:00",
+            "memory": "16G"
+        }
+        
+        config = ConfigManager({"grid": test_grid_config})
+        grid_config = config.get_grid_config()
+        
+        assert grid_config == test_grid_config
+        assert grid_config["script_path"] == "/test/path"
+        assert grid_config["memory"] == "16G"
+    
+    def test_get_grid_config_missing(self):
+        """Test retrieving grid configuration when it's missing"""
+        config = ConfigManager({})  # No grid config
+        grid_config = config.get_grid_config()
+        
+        assert grid_config == {}
+    
+    def test_save_config(self, temp_dir):
+        """Test saving configuration to file"""
+        test_config = {
+            "database": {"host": "savehost"},
+            "test_key": "test_value"
+        }
+        
+        config = ConfigManager(test_config)
+        save_path = os.path.join(temp_dir, "saved_config.json")
+        
+        # Save the config
+        result_path = config.save(save_path)
+        assert result_path == save_path
+        assert os.path.exists(save_path)
+        
+        # Load the saved config and verify
+        with open(save_path, 'r') as f:
+            loaded_config = json.load(f)
+        
+        assert loaded_config["database"]["host"] == "savehost"
+        assert loaded_config["test_key"] == "test_value"
+    
+    def test_save_config_default_path(self, monkeypatch):
+        """Test saving configuration to default path"""
+        # Mock tempfile.gettempdir to return a specific dir
+        test_temp_dir = "/mock/temp/dir"
+        monkeypatch.setattr(tempfile, "gettempdir", lambda: test_temp_dir)
+        
+        # Mock os.makedirs to avoid actually creating directories
+        monkeypatch.setattr(os, "makedirs", lambda path, exist_ok: None)
+        
+        # Mock open to avoid actually writing files
+        mock_file = Mock()
+        mock_open = Mock(return_value=mock_file)
+        mock_open.return_value.__enter__ = Mock(return_value=mock_file)
+        mock_open.return_value.__exit__ = Mock(return_value=None)
+        monkeypatch.setattr(builtins, "open", mock_open)
+        
+        # Test with no path specified
+        config = ConfigManager({"test": "value"})
+        config.save()
+        
+        # Verify the expected path
+        expected_path = os.path.join(test_temp_dir, "dpam_config.json")
+        mock_open.assert_called_with(expected_path, 'w')
+
+
+class TestGlobalConfigManager:
+    """Tests for global configuration manager functions"""
+    
+    def test_get_config_loads_default(self, monkeypatch):
+        """Test get_config loads default config when none found"""
+        # Reset global config_manager
+        import dpam.config
+        monkeypatch.setattr(dpam.config, "config_manager", None)
+        
+        # Mock load_config to return a specific config
+        mock_config = ConfigManager({"test": "global_config"})
+        monkeypatch.setattr(dpam.config, "load_config", lambda: mock_config)
+        
+        # Get the global config
+        config = dpam.config.get_config()
+        
+        # Should be the mock config
+        assert config.get("test") == "global_config"
+        assert dpam.config.config_manager is config
+    
+    def test_get_config_reuses_existing(self, monkeypatch):
+        """Test get_config reuses existing config manager"""
+        # Set a specific global config_manager
+        import dpam.config
+        mock_config = ConfigManager({"test": "existing_config"})
+        monkeypatch.setattr(dpam.config, "config_manager", mock_config)
+        
+        # Should not call load_config
+        load_config_mock = Mock()
+        monkeypatch.setattr(dpam.config, "load_config", load_config_mock)
+        
+        # Get the global config
+        config = dpam.config.get_config()
+        
+        # Should be the existing config
+        assert config is mock_config
+        assert config.get("test") == "existing_config"
+        load_config_mock.assert_not_called()
+
+
+class TestComplexEnvironmentOverrides:
+    """Tests for complex environment variable overrides"""
+    
+    def test_env_var_nested_override(self, monkeypatch):
+        """Test environment variable overrides for nested keys"""
+        # Set environment variables for nested keys
+        monkeypatch.setenv("DPAM_GRID_MEMORY", "32G")
+        monkeypatch.setenv("DPAM_GRID_THREADS", "8")
+        monkeypatch.setenv("DPAM_PIPELINE_MIN_DOMAIN_SIZE", "40")
+        
+        # Create config with different values
+        config = ConfigManager({
+            "grid": {
+                "memory": "8G",
+                "threads": 4
+            },
+            "pipeline": {
+                "min_domain_size": 30
+            }
+        })
+        
+        # Environment variables should override the config values
+        assert config.get("grid.memory") == "32G"
+        assert config.get("grid.threads") == 8  # Should be converted to int
+        assert config.get("pipeline.min_domain_size") == 40
+    
+    def test_env_var_array_values(self, monkeypatch):
+        """Test environment variables for arrays are correctly handled"""
+        # This is a limitation - can't easily set arrays via env vars
+        # But the code should handle it gracefully
+        monkeypatch.setenv("DPAM_SEARCH_PATHS", "['/path1', '/path2']")
+        
+        config = ConfigManager({})
+        # Should be kept as a string, not parsed as JSON
+        assert config.get("search_paths") == "['/path1', '/path2']"
+    
+    def test_env_var_case_sensitivity(self, monkeypatch):
+        """Test environment variable handling is case-insensitive"""
+        # Different case variations should work
+        monkeypatch.setenv("DPAM_DATABASE_HOST", "lowercase")
+        monkeypatch.setenv("DPAM_DATABASE_PORT", "5678")
+        monkeypatch.setenv("DPAM_DATA_DIR", "/case/test")
+        
+        config = ConfigManager({
+            "database": {
+                "HOST": "original",  # Note the uppercase here
+                "Port": 1234  # Mixed case
+            },
+            "DATA_DIR": "/original"  # Uppercase in config
+        })
+        
+        # Keys in config should be accessed case-sensitively
+        assert config.get("database.HOST") == "lowercase"  # Env var should override
+        assert config.get("database.Port") == 5678  # Env var should override
+        assert config.get("DATA_DIR") == "/case/test"  # Env var should override
